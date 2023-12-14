@@ -1,3 +1,4 @@
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
@@ -14,5 +15,15 @@ export class UserRepository extends Repository<User> {
       userRepository.manager,
       userRepository.queryRunner,
     );
+  }
+
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    const { username, password } = authCredentialsDto;
+
+    const user = new User();
+    user.username = username;
+    user.password = password;
+
+    await user.save();
   }
 }
