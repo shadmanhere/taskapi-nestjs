@@ -45,14 +45,14 @@ export class TasksController {
 
   @Patch('/:id/status')
   async updateTaskStatus(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body('status', TaskStatusValidationPipe) status: TaskStatus,
   ): Promise<Task> {
     return await this.tasksService.updateTaskStatus(id, status);
   }
 
   @Delete('/:id')
-  async deleteTaskById(@Param('id') id: number): Promise<void> {
+  async deleteTaskById(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.tasksService.deleteTaskById(id);
   }
 }
