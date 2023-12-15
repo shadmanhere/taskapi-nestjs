@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,16 +27,22 @@ export class UserRepository extends Repository<User> {
 
     const user = new User();
     user.username = username;
-    user.password = password;
+    user.salt = await bcrypt.genSalt();
+    user.password = await this.hashPassword(password, user.salt); // hasshed password;
 
     try {
       await user.save();
     } catch (error) {
-      if (error.code === '23505') { // duplicate username
+      if (error.code === '23505') {
+        // duplicate username
         throw new ConflictException('Username already exists');
       } else {
         throw new InternalServerErrorException();
       }
     }
+  }
+
+  private async hashPassword(password: string, salt: string): Promise<string> {
+    return bcrypt.hash(password, salt);
   }
 }
