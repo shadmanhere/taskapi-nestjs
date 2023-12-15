@@ -21,6 +21,7 @@ export class User extends BaseEntity {
 
   @Column()
   salt: string;
+  tasks: any;
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
